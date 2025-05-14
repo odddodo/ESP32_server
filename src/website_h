@@ -1,0 +1,154 @@
+#ifndef website_h
+#define website_h
+#include <ESPAsyncWebServer.h>
+
+const char html[] PROGMEM = R"rawliteral(
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>noisenoise</title>
+      <style>
+        :root {
+        --slider-0:rgb(194, 194, 194);
+          --slider-1: hsl(12, 80.40%, 60.00%);
+          --slider-2: hsl(66, 80.40%, 50.00%);
+          --slider-3: hsl(271, 80.40%, 60.00%);
+          --slider-4: var(--slider-1);
+          --slider-5: var(--slider-1);
+          --slider-6: var(--slider-2);
+          --slider-7: var(--slider-2);
+          --slider-8: var(--slider-3);
+          --slider-9: var(--slider-3);
+          --slider-10: var(--slider-1);
+          --slider-11: var(--slider-2);
+          --slider-12: var(--slider-3);
+          --slider-13: var(--slider-0);
+          --slider-14: var(--slider-0);
+        }
+    
+        body {
+          font-family: monospace;
+          padding: 20px;
+          background-color: rgb(199, 199, 199);
+        }
+     h1 {
+  text-align: center;
+  font-family: monospace;
+  font-size: 2.5em;
+  color: rgb(156, 156, 156);
+}
+        .slider-container {
+          margin-bottom: 30px;
+        }
+        input[type="range"] {
+          width: 100%;
+          height: 30px;
+          -webkit-appearance: none;
+          background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: 6px;
+          border-radius: 3px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          margin-top: -7px;
+          cursor: pointer;
+          border: none;
+        }
+    
+        /* Slider track and thumb colors */
+        #s0::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s1::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s2::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s3::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s4::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s5::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s6::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s7::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s8::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s9::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s10::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s11::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s12::-webkit-slider-runnable-track { background: var(--slider-0); }
+        #s13::-webkit-slider-runnable-track { background: var(--slider-0); }
+    
+        #s0::-webkit-slider-thumb { background: var(--slider-1); }
+        #s1::-webkit-slider-thumb { background: var(--slider-2); }
+        #s2::-webkit-slider-thumb { background: var(--slider-3); }
+        #s3::-webkit-slider-thumb { background: var(--slider-4); }
+        #s4::-webkit-slider-thumb { background: var(--slider-5); }
+        #s5::-webkit-slider-thumb { background: var(--slider-6); }
+        #s6::-webkit-slider-thumb { background: var(--slider-7); }
+        #s7::-webkit-slider-thumb { background: var(--slider-8); }
+        #s8::-webkit-slider-thumb { background: var(--slider-9); }
+        #s9::-webkit-slider-thumb { background: var(--slider-10); }
+        #s10::-webkit-slider-thumb { background: var(--slider-11); }
+        #s11::-webkit-slider-thumb { background: var(--slider-12); }
+        #s12::-webkit-slider-thumb { background: var(--slider-13); }
+        #s13::-webkit-slider-thumb { background: var(--slider-14); }
+      </style>
+    
+      <script>
+        var socket;
+        var isSliding = new Array(14).fill(false);
+    
+        function setup() {
+          socket = new WebSocket("ws://" + location.host + "/ws");
+    
+          socket.onmessage = function(event) {
+            let values = event.data.split(',').map(Number);
+            for (let i = 0; i < 14; i++) {
+              if (!isSliding[i]) {
+                document.getElementById("s" + i).value = values[i];
+              }
+            }
+          };
+    
+          for (let i = 0; i < 14; i++) {
+            let slider = document.getElementById("s" + i);
+    
+            slider.addEventListener("input", function () {
+              isSliding[i] = true;
+              sendValues();
+            });
+    
+            slider.addEventListener("change", function () {
+              isSliding[i] = false;
+            });
+          }
+        }
+    
+        function sendValues() {
+          let values = [];
+          for (let i = 0; i < 14; i++) {
+            values.push(document.getElementById("s" + i).value);
+          }
+          socket.send(values.join(","));
+        }
+      </script>
+    </head>
+    
+    <body onload="setup()">
+      <h1>noisenoise</h1>
+      %SLIDERS%
+    </body>
+    </html>
+    )rawliteral";
+    
+
+    String generateSliderHTML() {
+        String sliders = "";
+        for (int i = 0; i < 14; i++) {
+          sliders += "<div class='slider-container'>";
+          sliders += "<input type='range' min='0' max='255' id='s" + String(i) + "'>";
+          sliders += "</div>";
+        }
+        return sliders;
+      }
+
+#endif
