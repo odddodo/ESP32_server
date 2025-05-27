@@ -2,9 +2,8 @@
 #define website_h
 #include <ESPAsyncWebServer.h>
 
-#define NUMSLIDERS 24 // Set your slider count here
+#define NUMSLIDERS 45
 
-// HTML Template (with %SLIDERS% as placeholder)
 const char html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html>
@@ -33,7 +32,7 @@ const char html[] PROGMEM = R"rawliteral(
     }
 
     input[type="range"] {
-      width: 100%;
+      width: 80%;
       height: 30px;
       -webkit-appearance: none;
       background: transparent;
@@ -53,7 +52,25 @@ const char html[] PROGMEM = R"rawliteral(
       cursor: pointer;
       border: none;
     }
+    ::-webkit-scrollbar {
+      width: 16px;
+    }
 
+    ::-webkit-scrollbar-track {
+      background: #e0e0e0;
+      border-radius: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #888;
+      border-radius: 8px;
+      border: 4px solid transparent;
+      background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
     %SLIDERSTYLES%
   </style>
 
@@ -114,7 +131,10 @@ String generateCSSVars() {
     --red: hsl(347, 97.30%, 43.90%);
     --green: hsl(71, 97.80%, 35.70%);
     --blue: hsl(214, 61.30%, 29.40%);
-    --grey: rgb(124, 124, 124);
+    --orange: hsl(17, 99.20%, 49.20%);
+    --cyan: hsl(175, 92.30%, 41.00%);
+    --magenta: hsl(300, 93.30%, 40.80%);
+    --grey: rgb(120, 120, 120);
   )";
 }
 
@@ -125,8 +145,10 @@ String generateSliderStyles() {
     if (i < 7) color = "var(--red)";
     else if (i < 14) color = "var(--green)";
     else if (i < 21) color = "var(--blue)";
+    else if (i < 28) color = "var(--orange)";
+    else if (i < 35) color = "var(--cyan)";
+    else if (i < 42) color = "var(--magenta)";
     else color = "var(--grey)";
-
     styles += "#s" + String(i) + "::-webkit-slider-runnable-track { background: var(--grey); }\n";
     styles += "#s" + String(i) + "::-webkit-slider-thumb { background: " + color + "; }\n";
   }
@@ -145,12 +167,10 @@ String generateSliderHTML() {
 
 String getFinalHTML() {
   String page = html;
-
   page.replace("%NUMSLIDERS%", String(NUMSLIDERS));
   page.replace("%CSSVARS%", generateCSSVars());
   page.replace("%SLIDERSTYLES%", generateSliderStyles());
   page.replace("%SLIDERS%", generateSliderHTML());
-
   return page;
 }
 

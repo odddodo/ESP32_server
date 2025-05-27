@@ -8,7 +8,6 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-#define NUMSLIDERS 23
 #define I2C_TRANSFER_BYTES NUMSLIDERS 
 
 int sliderValues[NUMSLIDERS] = {0};
