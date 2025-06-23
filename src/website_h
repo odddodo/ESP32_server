@@ -2,7 +2,7 @@
 #define website_h
 #include <ESPAsyncWebServer.h>
 
-#define NUMSLIDERS 45
+#define NUMSLIDERS 46
 
 const char html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
