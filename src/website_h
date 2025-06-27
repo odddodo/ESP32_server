@@ -115,11 +115,33 @@ function sendValues() {
   }
   socket.send(values.join(","));
 }
+  function requestSaveToSD() {
+  if (!initialized) return;
+
+  let values = [];
+  for (let i = 0; i < %NUMSLIDERS%; i++) {
+    values.push(document.getElementById("s" + i).value);
+  }
+
+  // Prefix message with a command, e.g., "SAVE:"
+  socket.send("SAVE:" + values.join(","));
+}
   </script>
 </head>
 
 <body>
   <h1>JANUSZ</h1>
+  <div style="text-align:center; margin-bottom: 20px;">
+    <button onclick="requestSaveToSD()" style="
+      font-size: 1.2em;
+      padding: 10px 20px;
+      background-color: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    ">Save</button>
+  </div>
   %SLIDERS%
   <script>setup();</script>
 </body>
